@@ -11,16 +11,24 @@ if [ "$(uname -s)" == "Darwin" ]; then
     BEEBASM=tools/beebasm/beebasm-darwin
     MD5SUM=md5
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    BEEBASM=tools/beebasm/beebasm
+    if [ "$(uname -m)" == "x86_64" ]; then
+        BEEBASM=tools/beebasm/beebasm64
+    else
+        BEEBASM=tools/beebasm/beebasm32
+    fi
+    MD5SUM=md5sum
 elif [ "$(expr substr $(uname -s) 1 9)" == "CYGWIN_NT" ]; then
     BEEBASM=../tools/beebasm/beebasm.exe
     MD5SUM=md5sum
 fi
 
 # Device:
-# M is MemoryMapped IO based (typically &FE18, for BeebEm)
 # U is normal User Port VIA based
-for device in U T E M
+# T is User Port connected "TurboMMC" interface
+# E is Electron Plus One Printer Port connected interface (experimental)
+# M is MemoryMapped IO based (typically &FE18, for BeebEm)
+# P is Beeb Printer Port connected Interface (experimental)
+for device in U T E M P
 do
     build=build/${device}
     mkdir -p ${build}
@@ -36,6 +44,9 @@ do
     if [ $device == "E" ]
     then
         filelist=top_E*.asm
+    elif [ $device == "P" ]
+    then
+        filelist="top_[MS]*.asm top_ZMMFS.asm"
     else
         filelist=top_*.asm
     fi
@@ -55,7 +66,7 @@ do
             echo "Building ${device}/$name..."
 #        fi
 
-        # Assember the ROM
+        # Assemble the ROM
         $BEEBASM -i ${top} -o ${build}/${name} -v >& ${build}/${name}.log
 
         # Check if ROM has been build, otherwise fail early
@@ -66,11 +77,18 @@ do
             exit
         fi
 
-        # Create the .inf file
-        echo -e "\$."${name}"\t8000\t8000" > ${build}/${name}.inf
+        # To save space, exclude the Z builds from the .ssd image
+        if [[ $name != Z* ]]
+        then
+            # Create the .inf file
+            echo -e "\$."${name}"\t8000\t8000" > ${build}/${name}.inf
 
-        # Add into the SSD
-        tools/mmb_utils/putfile.pl ${ssd} ${build}/${name}
+            # Add into the SSD
+            tools/mmb_utils/putfile.pl ${ssd} ${build}/${name}
+
+            # Delete the .inf file
+            rm -f ${build}/${name}.inf
+        fi
 
         # Report end of code
         grep "code ends at" ${build}/${name}.log

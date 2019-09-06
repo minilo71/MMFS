@@ -10,7 +10,7 @@ about until it was rediscovered in 2015.
 For more details on the release structures, see:
     https://github.com/hoglet67/MMFS/wiki/Release-structure
 
-For binrary releases, see:
+For binary releases, see:
     https://github.com/hoglet67/MMFS/releases
 
 For further documention see:
@@ -49,7 +49,7 @@ This is the original interface design, as conceived by Martin Mather
 in 2006.
 
 A schematic of the original hardware can be found here:
-http://swhs.home.xs4all.nl/bbc/mmbeeb/
+https://web.archive.org/web/20171002181904/https://swhs.home.xs4all.nl/bbc/mmbeeb
 
 The original hardware uses the following BBC User Port connections:
 
@@ -77,7 +77,7 @@ control three buffers, providing two different operating modes.
 When PB[4:2] are 010, then the hardware is configured as above, and
 the interface is compatible with the original hardware.
 
-When PB[4:2] are 101, then the hardware is re-configured as: 
+When PB[4:2] are 101, then the hardware is re-configured as:
 
 User Port     SD Card
  (Master)     (Slave)
