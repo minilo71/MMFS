@@ -18,7 +18,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     fi
     MD5SUM=md5sum
 elif [ "$(expr substr $(uname -s) 1 9)" == "CYGWIN_NT" ]; then
-    BEEBASM=../tools/beebasm/beebasm.exe
+    BEEBASM=tools/beebasm/beebasm.exe
     MD5SUM=md5sum
 fi
 
