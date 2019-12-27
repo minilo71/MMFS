@@ -7,20 +7,24 @@ VERSION=`grep '#VERSION#' VERSION.asm | cut -d\" -f2`
 echo "Building MMFS $VERSION"
 
 # Set the BEEBASM executable for the platform
+# Let's see if the user already has one on their path
+BEEBASM=$(type -path beebasm 2>/dev/null)
 if [ "$(uname -s)" == "Darwin" ]; then
-    BEEBASM=tools/beebasm/beebasm-darwin
+    BEEBASM=${BEEBASM:-tools/beebasm/beebasm-darwin}
     MD5SUM=md5
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     if [ "$(uname -m)" == "x86_64" ]; then
-        BEEBASM=tools/beebasm/beebasm64
+        BEEBASM=${BEEBASM:-tools/beebasm/beebasm64}
     else
-        BEEBASM=tools/beebasm/beebasm32
+        BEEBASM=${BEEBASM:-tools/beebasm/beebasm32}
     fi
     MD5SUM=md5sum
 elif [ "$(expr substr $(uname -s) 1 9)" == "CYGWIN_NT" ]; then
     BEEBASM=tools/beebasm/beebasm.exe
     MD5SUM=md5sum
 fi
+BEEBASM=${BEEBASM:-tools/beebasm/beebasm.exe}
+echo Using $BEEBASM
 
 # Device:
 # U is normal User Port VIA based
@@ -43,7 +47,7 @@ do
 
     if [ $device == "E" ]
     then
-        filelist=top_E*.asm
+        filelist="top_E*.asm top_ZEMMFS.asm"
     elif [ $device == "P" ]
     then
         filelist="top_[MS]*.asm top_ZMMFS.asm"
