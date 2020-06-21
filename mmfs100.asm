@@ -8,6 +8,30 @@
 \ Device: U=User Port, T=User Port Turbo, M=Memory Mapped, E=Elk Printer Port, P=Beeb Printer Port
 INCLUDE "DEVICE.asm"
 
+;; At the moment, we either include or exclude all the optional commands
+
+;; Normal Commands
+_INCLUDE_CMD_ACCESS_=_COMMANDS_
+_INCLUDE_CMD_BACKUP_=_COMMANDS_
+_INCLUDE_CMD_COMPACT_=_COMMANDS_
+_INCLUDE_CMD_COPY_=_COMMANDS_
+_INCLUDE_CMD_DELETE_=_COMMANDS_
+_INCLUDE_CMD_DESTROY_=_COMMANDS_
+_INCLUDE_CMD_ENABLE_=_COMMANDS_
+_INCLUDE_CMD_FORM_VERIFY_=_COMMANDS_
+_INCLUDE_CMD_FREE_MAP_=_COMMANDS_
+_INCLUDE_CMD_RENAME_=_COMMANDS_
+_INCLUDE_CMD_TITLE_=_COMMANDS_
+_INCLUDE_CMD_WIPE_=_COMMANDS_
+
+;; DUTILS Commands
+_INCLUDE_CMD_DCAT_=_COMMANDS_
+_INCLUDE_CMD_DDRIVE_=_COMMANDS_
+_INCLUDE_CMD_DFREE_=_COMMANDS_
+_INCLUDE_CMD_DOP_=_COMMANDS_
+_INCLUDE_CMD_DRECAT_=_COMMANDS_
+_INCLUDE_CMD_DABOUT_=_COMMANDS_
+
 \ MA/MP constants must be even numbers
 IF _MASTER_
 	CPU 1				; 65C12
@@ -28,9 +52,6 @@ ELSE
 	MA=0
 ENDIF
 MP=HI(MA)
-
-;; To save space, don't include the undocumented ABOUT command
-_ABOUT_=TRUE
 
 INCLUDE "VERSION.asm"
 INCLUDE "SYSVARS.asm"			; OS constants
@@ -1271,47 +1292,75 @@ rn%=&B0
 	\ COMMAND TABLE 1		; MMFS commands
 .cmdtable1
 	EQUB &FF			; Last command number (-1)
+IF _INCLUDE_CMD_ACCESS_
 	EQUS "ACCESS"			; Command string
 	EQUB &80+&32			; Parameters (Bit 7 is string terminator)
+ENDIF
+IF _INCLUDE_CMD_BACKUP_
 	EQUS "BACKUP"
 	EQUB &80+&0C
+ENDIF
 	EQUS "CLOSE"
 	EQUB &80
+IF _INCLUDE_CMD_COMPACT_
 	EQUS "COMPACT"
 	EQUB &80+&05
+ENDIF
+IF _INCLUDE_CMD_COPY_
 	EQUS "COPY"
 	EQUB &80+&2C
+ENDIF
+IF _INCLUDE_CMD_DELETE_
 	EQUS "DELETE"
 	EQUB &80+&08
+ENDIF
+IF _INCLUDE_CMD_DESTROY_
 	EQUS "DESTROY"
 	EQUB &80+&02
+ENDIF
 	EQUS "DIR"
 	EQUB &80+&06
 	EQUS "DRIVE"
 	EQUB &80+&01
+IF _INCLUDE_CMD_ENABLE_
 	EQUS "ENABLE"
 	EQUB &80
+ENDIF
 	EQUS "EX"
 	EQUB &80+&06
+IF _INCLUDE_CMD_FORM_VERIFY_
 	EQUS "FORM"
 	EQUB &80+&5F
+ENDIF
+IF _INCLUDE_CMD_FREE_MAP_
 	EQUS "FREE"
 	EQUB &80+&04
+ENDIF
 .info_cmd_index
 	EQUS "INFO"
 	EQUB &80+&02
 	EQUS "LIB"
 	EQUB &80+&06
+IF _INCLUDE_CMD_FREE_MAP_
 	EQUS "MAP"
 	EQUB &80+&04
+ENDIF
+IF _INCLUDE_CMD_RENAME_
 	EQUS "RENAME"
 	EQUB &80+&0D
+ENDIF
+IF _INCLUDE_CMD_TITLE_
 	EQUS "TITLE"
 	EQUB &80+&0A
+ENDIF
+IF _INCLUDE_CMD_FORM_VERIFY_
 	EQUS "VERIFY"
 	EQUB &80+&05
+ENDIF
+IF _INCLUDE_CMD_WIPE_
 	EQUS "WIPE"
 	EQUB &80+&02
+ENDIF
 	BRK				; End of table
 
 	\ COMMAND TABLE 2
@@ -1367,21 +1416,31 @@ ENDIF
 	EQUB (cmdaddr4-cmdaddr1)/2-1
 	EQUS "BOOT"
 	EQUB &80+&07
+IF _INCLUDE_CMD_DCAT_
 	EQUS "CAT"
 	EQUB &80+&0E
+ENDIF
+IF _INCLUDE_CMD_DDRIVE_
 	EQUS "DRIVE"
 	EQUB &80+&04
+ENDIF
+IF _INCLUDE_CMD_DFREE_
 	EQUS "FREE"
 	EQUB &80
+ENDIF
 	EQUS "IN"
 	EQUB &80+&74
+IF _INCLUDE_CMD_DOP_
 	EQUS "OP"
 	EQUB &80+&49
+ENDIF
 	EQUS "OUT"
 	EQUB &80+&04
+IF _INCLUDE_CMD_DRECAT_
 	EQUS "RECAT"
 	EQUB &80
-IF _ABOUT_
+ENDIF
+IF _INCLUDE_CMD_DABOUT_
 	EQUS "ABOUT"
 	EQUB &80
 ENDIF
@@ -1390,26 +1449,54 @@ ENDIF
 	\\ Address of sub-routines
 	\\ If bit 15 clear, call MMC_BEGIN2
 .cmdaddr1
+IF _INCLUDE_CMD_ACCESS_
 	EQUW CMD_ACCESS-1
+ENDIF
+IF _INCLUDE_CMD_BACKUP_
 	EQUW CMD_BACKUP-1
+ENDIF
 	EQUW CMD_CLOSE-1
+IF _INCLUDE_CMD_COMPACT_
 	EQUW CMD_COMPACT-1
+ENDIF
+IF _INCLUDE_CMD_COPY_
 	EQUW CMD_COPY-1
+ENDIF
+IF _INCLUDE_CMD_DELETE_
 	EQUW CMD_DELETE-1
+ENDIF
+IF _INCLUDE_CMD_DESTROY_
 	EQUW CMD_DESTROY-1
+ENDIF
 	EQUW CMD_DIR-1
 	EQUW CMD_DRIVE-1
+IF _INCLUDE_CMD_ENABLE_
 	EQUW CMD_ENABLE-1
+ENDIF
 	EQUW CMD_EX-1
+IF _INCLUDE_CMD_FORM_VERIFY_
 	EQUW CMD_FORM-&8001
+ENDIF
+IF _INCLUDE_CMD_FREE_MAP_
 	EQUW CMD_FREE-1
+ENDIF
 	EQUW CMD_INFO-1
 	EQUW CMD_LIB-1
+IF _INCLUDE_CMD_FREE_MAP_
 	EQUW CMD_MAP-1
+ENDIF
+IF _INCLUDE_CMD_RENAME_
 	EQUW CMD_RENAME-1
+ENDIF
+IF _INCLUDE_CMD_TITLE_
 	EQUW CMD_TITLE-1
+ENDIF
+IF _INCLUDE_CMD_FORM_VERIFY_
 	EQUW CMD_VERIFY-&8001
+ENDIF
+IF _INCLUDE_CMD_WIPE_
 	EQUW CMD_WIPE-1
+ENDIF
 	EQUW NotCmdTable1-1
 
 .cmdaddr2
@@ -1446,14 +1533,24 @@ ENDIF
 
 .cmdaddr4
 	EQUW CMD_DBOOT-&8001
+IF _INCLUDE_CMD_DCAT_
 	EQUW CMD_DCAT-&8001
+ENDIF
+IF _INCLUDE_CMD_DDRIVE_
 	EQUW CMD_DDRIVE-&8001
+ENDIF
+IF _INCLUDE_CMD_DFREE_
 	EQUW CMD_DFREE-&8001
+ENDIF
 	EQUW CMD_DIN-&8001
+IF _INCLUDE_CMD_DOP_
 	EQUW CMD_DOP-&8001
+ENDIF
 	EQUW CMD_DOUT-&8001
+IF _INCLUDE_CMD_DRECAT_
 	EQUW CMD_DRECAT-&8001
-IF _ABOUT_
+ENDIF
+IF _INCLUDE_CMD_DABOUT_
 	EQUW CMD_DABOUT-1
 ENDIF
 	EQUW NotCmdTable4-1
@@ -1566,6 +1663,7 @@ cmdtab4= cmdtable4-cmdtable1
 	BNE gocmdcode2
 }
 
+IF _INCLUDE_CMD_WIPE_
 .CMD_WIPE
 {
 	JSR parameter_afsp
@@ -1592,15 +1690,21 @@ cmdtab4= cmdtable4-cmdtable1
 	BCS wipeloop
 	RTS
 }
+ENDIF
 
+IF _INCLUDE_CMD_DELETE_
 .CMD_DELETE
+{
 	JSR parameter_fsp
 	JSR Param_SyntaxErrorIfNull
 	JSR getcatentry_fspTxtP
 	JSR prt_InfoMsg_Yoffset
 	JSR DeleteCatEntry_YFileOffset
 	JMP SaveCatToDisk
+}
+ENDIF
 
+IF _INCLUDE_CMD_DESTROY_
 .CMD_DESTROY
 {
 	JSR IsEnabledOrGo		; If NO it returns to calling sub
@@ -1633,6 +1737,7 @@ cmdtab4= cmdtable4-cmdtable1
 	JSR PrintString
 	EQUS 13,"Deleted",13
 }
+ENDIF
 
 .Y_add8
 	INY
@@ -1646,12 +1751,14 @@ cmdtab4= cmdtable4-cmdtable1
 	INY
 	RTS
 
+IF _INCLUDE_CMD_DESTROY_ OR _INCLUDE_CMD_WIPE_
 .DeleteCatEntry_AdjustPtr
 	JSR DeleteCatEntry_YFileOffset	; Delete cat entry
 	LDY &B6
 	JSR Y_sub8			; Take account of deletion
 	STY &B6				; so ptr is at next file
 	RTS
+ENDIF
 
 	\\ *DRIVE <drive>
 .CMD_DRIVE
@@ -1899,10 +2006,9 @@ ENDIF
 	RTS
 
 
-
-	\ ** RETITLE DISK
 titlestr%=MA+&1000
 
+IF _INCLUDE_CMD_TITLE_
 .CMD_TITLE
 {
 	JSR Param_SyntaxErrorIfNull
@@ -1938,7 +2044,9 @@ titlestr%=MA+&1000
 	STA MA+&0E00,X
 	RTS
 }
+ENDIF
 
+IF _INCLUDE_CMD_TITLE_ OR _INCLUDE_CMD_BACKUP_
 	\ Update title in disk table for disk in current drive
 	\ Title at titlestr%
 .UpdateDiskTableTitle
@@ -1952,9 +2060,11 @@ titlestr%=MA+&1000
 	BPL loop
 	JMP SaveDiskTable
 }
+ENDIF
 
-	\ ** ACCESS
+IF _INCLUDE_CMD_ACCESS_
 .CMD_ACCESS
+{
 	JSR parameter_afsp
 	JSR Param_SyntaxErrorIfNull
 	JSR read_fspTextPointer
@@ -1991,6 +2101,8 @@ titlestr%=MA+&1000
 	JSR errBAD			; Bad attribute
 	EQUB &CF
 	EQUS "attribute",0
+}
+ENDIF
 
 
 .fscv0_starOPT
@@ -2175,10 +2287,12 @@ ENDIF
 	STA &C2				; C2=mixed byte
 	RTS
 
+IF _INCLUDE_CMD_ENABLE_
 .CMD_ENABLE
 	LDA #&01
 	STA CMDEnabledIf1
 	RTS
+ENDIF
 
 
 .LoadAddrHi2
@@ -2343,7 +2457,7 @@ gdopt%=&B7
 	JMP gddlp
 }
 
-	\ ** RENAME FILE
+IF _INCLUDE_CMD_RENAME_
 .CMD_RENAME
 {
 	JSR parameter_fsp
@@ -2385,6 +2499,7 @@ gdopt%=&B7
 	BPL rname_loop			; else Save catalogue
 	JMP SaveCatToDisk
 }
+ENDIF
 
 .TUBE_CheckIfPresent
 	LDA #&EA			; Tube present?
@@ -3516,7 +3631,7 @@ ENDIF
 .osfile_updatelocksavecat
 	JSR osfile_updatelock
 .osfile_savecat_retA_1
-	JSR jmp_savecattodisk
+	JSR SaveCatToDisk
 	LDA #&01
 	RTS
 .osfile_update_loadaddr_Xoffset
@@ -4698,7 +4813,7 @@ ENDIF
 .CMD_DUTILS
 	TYA
 	LDX #cmdtab4
-IF _ABOUT_
+IF _INCLUDE_CMD_DABOUT_
 	LDY #cmdtab4size-1
 ELSE
 	LDY #cmdtab4size
@@ -4838,6 +4953,7 @@ ENDIF
 	EQUB &FF
 
 
+IF _INCLUDE_CMD_COMPACT_
 .CMD_COMPACT
 {
 	JSR Param_OptionalDriveNo
@@ -4931,7 +5047,9 @@ ENDIF
 	JSR prt_InfoLine_Yoffset
 	JMP compact_loop
 }
+ENDIF
 
+IF _INCLUDE_CMD_BACKUP_ OR _INCLUDE_CMD_DESTROY_ OR _INCLUDE_CMD_FORM_VERIFY_ OR _INCLUDE_CMD_DOP_
 .IsEnabledOrGo
 {
 	BIT CMDEnabledIf1
@@ -4943,6 +5061,7 @@ ENDIF
 .isgo
 	JMP PrintNewLine
 }
+ENDIF
 
 .Get_CopyDATA_Drives
 {
@@ -5006,6 +5125,7 @@ ENDIF
 .err_DISKFULL2
 	JMP errDISKFULL
 
+IF _INCLUDE_CMD_BACKUP_
 .CMD_BACKUP
 {
 	JSR Get_CopyDATA_Drives
@@ -5062,7 +5182,9 @@ ENDIF
 
 	JMP UpdateDiskTableTitle
 }
+ENDIF
 
+IF _INCLUDE_CMD_COPY_
 .CMD_COPY
 {
 	JSR parameter_afsp
@@ -5125,6 +5247,7 @@ ENDIF
 	BCS copy_loop1
 	RTS
 }
+ENDIF
 
 .cd_writedest_cat
 {
@@ -5173,6 +5296,7 @@ ENDIF
 	RTS
 }
 
+IF _INCLUDE_CMD_BACKUP_ OR _INCLUDE_CMD_COMPACT_ OR _INCLUDE_CMD_COPY_
 .CopyDATABLOCK
 {
 	LDA #&00			; *** Move or copy sectors
@@ -5245,6 +5369,7 @@ ENDIF
 	BNE cd_loop			; If Word C4 <> 0
 	RTS
 }
+ENDIF
 
 .SetLoadAddrToHost
 	LDA #&FF			; Set load address high bytes
@@ -5252,7 +5377,7 @@ ENDIF
 	STA MA+&1075
 	RTS
 
-
+IF _INCLUDE_CMD_FORM_VERIFY_
 .CMD_VERIFY
 	LDA #&00			; \\\\\ *VERIFY
 	BEQ vform1
@@ -5326,7 +5451,6 @@ ENDIF
 	JSR GSINIT_A
 	BNE vform5_driveloop		; More drives?
 	RTS
-}
 
 .jmp_reportEscape
 	JMP ReportESCAPE
@@ -5335,7 +5459,6 @@ ENDIF
 
 	\\ Verify / Format current drive
 .VFCurDrv
-{
 	BIT &C9
 	BMI vf1				; If formatting
 	JSR CheckCurDrvFormatted
@@ -5405,7 +5528,9 @@ ENDIF
 	JSR SaveCatToDisk
 .vf6_exit
 	JMP PrintNewLine
+
 }
+ENDIF
 
 	\\ Reset catalogue pages
 .ClearCatalogue
@@ -5453,6 +5578,7 @@ ENDIF
 }
 
 
+IF _INCLUDE_CMD_FREE_MAP_
 .CMD_FREE
 	SEC 				; \\\\\\\\\ *FREE
 	BCS Label_A7F7
@@ -5676,6 +5802,7 @@ ENDIF
 	RTS
 }
 
+ENDIF
 
 	\ *********** MMC ERROR CODE ***********
 
@@ -6490,6 +6617,12 @@ ELIF _DEVICE_='E'
 	INCLUDE "MMC_ElkPlus1.asm"
 ELIF _DEVICE_='P'
 	INCLUDE "MMC_BeebPrinter.asm"
+ELIF _DEVICE_='G'
+    IF _USE_MGC_SHIFTREG
+        INCLUDE "MMC_MGCII_ShiftReg.asm"
+    ELSE
+        INCLUDE "MMC_MGCII_BitBang.asm"
+    ENDIF
 ENDIF
 
 .errWrite2
@@ -6508,6 +6641,7 @@ INCLUDE "MMC.asm"
 	\\ Refresh disk table with disc titles
 
 	\ load first sector of disk table
+IF _INCLUDE_CMD_DRECAT_
 .CMD_DRECAT
 {
 	LDA #&80
@@ -6600,6 +6734,7 @@ INCLUDE "MMC.asm"
 .drc_label7
 	RTS
 }
+ENDIF
 
 
 	\\ *** Set up the string to be compared ***
@@ -6797,7 +6932,7 @@ dmAmbig%=MA+&100E	; string terminated with *
 }
 
 
-IF _ABOUT_
+IF _INCLUDE_CMD_DABOUT_
 	\\ *DABOUT -  PRINT INFO STRING
 .CMD_DABOUT
 	JSR PrintString
@@ -6842,6 +6977,7 @@ ENDIF
 dcEnd%=&A8	; last disk in range
 dcCount%=&AA	; number of disks found
 
+IF _INCLUDE_CMD_DCAT_
 .CMD_DCAT
 {
 	LDA #0
@@ -6955,6 +7091,7 @@ dcCount%=&AA	; number of disks found
 	NOP
 	JMP PrintNewLine
 }
+ENDIF
 
 	\\ *DFREE
 dfFree%=&A8	; number of unformatted disks
@@ -6964,6 +7101,7 @@ dfPtr%=&B0
 .dfSyntax
 	JMP errSYNTAX
 
+IF _INCLUDE_CMD_DFREE_
 .CMD_DFREE
 {
 	JSR GSINIT_A
@@ -7055,9 +7193,11 @@ dfPtr%=&B0
 	NOP
 	JMP PrintNewLine
 }
+ENDIF
 
 	\\ *DDRIVE (<drive>)
 	\\ List disks in drives
+IF _INCLUDE_CMD_DDRIVE_
 .CMD_DDRIVE
 {
 	STY &B3
@@ -7107,10 +7247,12 @@ dfPtr%=&B0
 .ddskexit
 	RTS
 }
+ENDIF
 
 	\\ Mark disk in current drive as formatted
 	\\ and clear its disk catalogue entry
 	\\ Used by *FORM
+IF _INCLUDE_CMD_FORM_VERIFY_
 .MarkDriveAsFormatted
 {
 	SEC				; disk must be unformatted
@@ -7126,7 +7268,9 @@ dfPtr%=&B0
 	TYA				; A=&0F Unlocked disk
 	BNE masf_status
 }
+ENDIF
 
+IF _INCLUDE_CMD_DOP_
 	\\ Mark disk as read only
 .dop_Protect
 	LDA #&00
@@ -7150,9 +7294,15 @@ dfPtr%=&B0
 
 .jmpErrNotFormatted
 	JMP errNotFormatted
+
+ENDIF
+
+IF _INCLUDE_CMD_DOP_ OR _INCLUDE_CMD_FORM_VERIFY_
 .jmpErrFormatted
 	JMP errFormatted
+ENDIF
 
+IF _INCLUDE_CMD_DOP_
 	\\ Mark disk as unformatted
 .dop_Kill
 {
@@ -7271,6 +7421,7 @@ dfPtr%=&B0
 	EQUW dop_Unprotect-1
 	EQUW dop_Protect-1
 }
+ENDIF
 
 
 	\ Include OSWORD emulation routines here
@@ -7371,4 +7522,8 @@ ENDIF
 
 PRINT "    code ends at",~P%," (",(guard_value - P%), "bytes free )"
 
+IF _DEVICE_='G'
+SAVE "", &8000, P%
+ELSE
 SAVE "", &8000, &C000
+ENDIF
