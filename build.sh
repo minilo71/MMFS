@@ -95,7 +95,7 @@ do
 
         if [ $device == "E" ]
         then
-            filelist="top_E*.asm top_ZEMMFS.asm"
+            filelist="top_E*.asm top_MAMMFS.asm top_MMFS.asm top_ZEMMFS.asm"
         elif [ $device == "G" ]
         then
             filelist="top_MGC*.asm"
